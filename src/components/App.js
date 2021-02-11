@@ -74,6 +74,8 @@ class App extends Component {
     console.log(event);
     const name = event.target[0].value;
     const phoneNumber = event.target[1].value;
+    const city = event.target[2].value;
+    console.log(city);
     const person = {
       Name: name,
       PhoneNumber: phoneNumber,
