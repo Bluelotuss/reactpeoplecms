@@ -3,12 +3,13 @@ import axios from "../../node_modules/axios";
 
 class PeopleCreate extends Component {
     state = {
-        name: "",
+        name : "",
         phoneNumber: "",
         cities: [],
         countries: [],
-        selectedCity: {},
-        selectedCountry: "",
+        idValue: -1,
+        city: 0,
+        country: 0,
     };
 
     componentDidMount() {
@@ -20,12 +21,9 @@ class PeopleCreate extends Component {
       .then((response) => {
         //Handle success
         console.log("api cities response:", response);
-        let citiesFromApi = response.data.map(city => {
-            return {value: city, display: city.cityName}
-        });
-        console.log(citiesFromApi);
-        this.setState({ cities: [{value: {id: 0}, display: 'Select your city'}].concat(citiesFromApi) });
-        console.log(this.state.cities);
+        this.setState({ cities: response.data });
+        console.log("cities state:", this.state.cities);
+
       })
       .catch((error) => {
         //Handle error
@@ -40,12 +38,8 @@ class PeopleCreate extends Component {
       .then((response) => {
         //Handle success
         console.log("api countries response:", response);
-        let countriesFromApi = response.data.map(country => {
-            return {value: country, display: country.countryName}
-        });
-        console.log(countriesFromApi);
-        this.setState({ countries: [{value: {id: 0}, display: 'Select your country'}].concat(countriesFromApi) });
-        console.log(this.state.countries);
+        this.setState({ countries: response.data });
+        console.log("countries state:", this.state.countries);
       })
       .catch((error) => {
         //Handle error
@@ -62,8 +56,16 @@ class PeopleCreate extends Component {
         this.setState({ [name]: value });
     };
 
+    handleChange = (event) => {
+      console.log(event);
+      console.log(event.target.value);
+      console.log(event.target.name);
+      const { name, value } = event.target;
+      this.setState({  [name]: (value) });
+  };
+
     render() {
-        const { name, phoneNumber, selectedCity } = this.state;
+        const { name, phoneNumber, idValue, cities, countries } = this.state;
 
         return (
             <form onSubmit={this.props.handleCreate}>
@@ -92,19 +94,29 @@ class PeopleCreate extends Component {
                 <div className="form-group">
                     <select
                     className="form-control"
-                    name="selectedCity"
-                    type="text"
-                    value={this.option.key.value.id}
-                    onChange={this.changeValue}>
-                        {this.state.cities.map((city) => <option key={"city" + city.value.id} value={city.value}>{city.display}</option>)}
+                    name="city"
+                    value={idValue}
+                    onChange={this.handleChange}>
+                      <option value="-1" disabled>
+                        Select a city
+                      </option>
+                        {cities.map((city) => (
+                        <option key={"cityId" + city.id} value={city.id}>
+                          {city.cityName}
+                        </option>
+                        ))}
                     </select>
                 </div>
                 <div className="form-group">
                     <select
                     className="form-control"
-                    name="selectedCountry"
-                    onChange={this.changeValue}>
-                        {this.state.countries.map((country) => <option key={"country" + country.value.id} value={country.value}>{country.display}</option>)}
+                    name="country"
+                    value={idValue}
+                    onChange={this.handleChange}>
+                      <option value="-1" disabled>
+                        Select a country
+                      </option>
+                        {countries.map((country) => <option key={"country" + country.id} value={country.id}>{country.countryName}</option>)}
                     </select>
                 </div>
                 <div className="form-group">

@@ -74,11 +74,19 @@ class App extends Component {
     console.log(event);
     const name = event.target[0].value;
     const phoneNumber = event.target[1].value;
-    const city = event.target[2].value;
-    console.log(city);
+    const { idCityValue, cities } = new PeopleCreate(this.state);
+    console.log(idCityValue);
+    let result;
+    for (let index = 0; index < cities.length; index++) {
+      if (idCityValue === cities[index].id) {
+        result = cities[index];
+      }
+    }
+    console.log(result);
     const person = {
       Name: name,
       PhoneNumber: phoneNumber,
+      City: result,
     };
 
     let peopleList = this.state.peopleList;
