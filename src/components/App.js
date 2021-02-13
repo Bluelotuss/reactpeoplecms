@@ -70,30 +70,51 @@ class App extends Component {
     });
   };
 
-  callbackFunction = (dataFromCreatePeople) => {
-    console.log("sendData", dataFromCreatePeople);
-    this.setState({ childData: dataFromCreatePeople.cities });
-    console.log("childData", this.state.childData);
+  callbackFunction = async (props, event) => {
+    event.preventDefault();
+    await this.setState({ childData: props });
+    this.handleCreate(event);
   };
 
   handleCreate = (event) => {
     event.preventDefault();
-    console.log(event);
     const name = event.target[0].value;
     const phoneNumber = event.target[1].value;
 
-    console.log("cities object", this.state.childData);
-    let result;
-    /*for (let index = 0; index < cities.length; index++) {
-      if (idCityValue === cities[index].id) {
-        result = cities[index];
+    console.log("chilData", this.state.childData);
+
+    let resultCity;
+    for (let index = 0; index < this.state.childData.cities.length; index++) {
+      if (
+        this.state.childData.idCityValue ===
+        this.state.childData.cities[index].id
+      ) {
+        console.log("indexstate", this.state.childData.cities[index]);
+        resultCity = this.state.childData.cities[index];
       }
-    }*/
-    console.log(result);
+    }
+
+    let resultCountry;
+    for (
+      let index = 0;
+      index < this.state.childData.countries.length;
+      index++
+    ) {
+      if (
+        this.state.childData.idCountryValue ===
+        this.state.childData.countries[index].id
+      ) {
+        console.log("indexstate", this.state.childData.countries[index]);
+        resultCountry = this.state.childData.countries[index];
+      }
+    }
+
+    console.log("citiesresult", resultCity);
     const person = {
       Name: name,
       PhoneNumber: phoneNumber,
-      City: result,
+      City: resultCity,
+      Country: resultCountry,
     };
 
     let peopleList = this.state.peopleList;

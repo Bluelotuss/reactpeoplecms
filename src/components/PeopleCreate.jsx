@@ -50,16 +50,21 @@ class PeopleCreate extends Component {
     }
 
     sendData = (event) => {
+      event.preventDefault();
       console.log("senddata run");
       const currentState = this.state;
-      this.props.callbackFunction(currentState);
-      this.props.handleCreate(event);
+      this.props.callbackFunction(currentState, event);
     }
 
     changeValue = (event) => {
         const { name, value } = event.target;
         this.setState({ [name]: value });
     };
+
+    handleChange = (event) => {
+      const { name, value } = event.target;
+      this.setState({ [name]: Number(value) });
+  };
 
 
     render() {
@@ -95,7 +100,7 @@ class PeopleCreate extends Component {
                     className="form-control"
                     name="idCityValue"
                     value={idCityValue}
-                    onChange={this.changeValue}>
+                    onChange={this.handleChange}>
                       <option value="-1" disabled>
                         Select a city
                       </option>
@@ -112,7 +117,7 @@ class PeopleCreate extends Component {
                     className="form-control"
                     name="idCountryValue"
                     value={idCountryValue}
-                    onChange={this.changeValue}>
+                    onChange={this.handleChange}>
                       <option value="-1" disabled>
                         Select a country
                       </option>
