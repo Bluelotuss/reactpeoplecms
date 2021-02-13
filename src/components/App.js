@@ -12,6 +12,7 @@ class App extends Component {
     showDetails: false,
     showCreate: false,
     peopleLoaded: false,
+    childData: [],
   };
 
   componentDidMount() {
@@ -69,19 +70,25 @@ class App extends Component {
     });
   };
 
+  callbackFunction = (dataFromCreatePeople) => {
+    console.log("sendData", dataFromCreatePeople);
+    this.setState({ childData: dataFromCreatePeople[0] });
+    console.log("childData", this.state.childData);
+  };
+
   handleCreate = (event) => {
     event.preventDefault();
     console.log(event);
     const name = event.target[0].value;
     const phoneNumber = event.target[1].value;
-    const { idCityValue, cities } = new PeopleCreate(this.state);
-    console.log(idCityValue);
+
+    console.log("cities object", this.state.childData);
     let result;
-    for (let index = 0; index < cities.length; index++) {
+    /*for (let index = 0; index < cities.length; index++) {
       if (idCityValue === cities[index].id) {
         result = cities[index];
       }
-    }
+    }*/
     console.log(result);
     const person = {
       Name: name,
@@ -154,7 +161,10 @@ class App extends Component {
           </div>
           <div className="col-6">
             {showCreate ? (
-              <PeopleCreate handleCreate={this.handleCreate} />
+              <PeopleCreate
+                handleCreate={this.handleCreate}
+                callbackFunction={this.callbackFunction}
+              />
             ) : showDetails ? (
               <PeopleDetails person={peopleDetails} />
             ) : (
