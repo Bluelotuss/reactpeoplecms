@@ -72,7 +72,7 @@ class App extends Component {
 
   callbackFunction = (dataFromCreatePeople) => {
     console.log("sendData", dataFromCreatePeople);
-    this.setState({ childData: dataFromCreatePeople[0] });
+    this.setState({ childData: dataFromCreatePeople.cities });
     console.log("childData", this.state.childData);
   };
 

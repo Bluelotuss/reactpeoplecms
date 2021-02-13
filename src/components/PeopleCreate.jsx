@@ -7,9 +7,8 @@ class PeopleCreate extends Component {
         phoneNumber: "",
         cities: [],
         countries: [],
-        idValue: -1,
-        city: 0,
-        country: 0,
+        idCityValue: -1,
+        idCountryValue: -1,
     };
 
     componentDidMount() {
@@ -50,25 +49,24 @@ class PeopleCreate extends Component {
       });
     }
 
+    sendData = (event) => {
+      console.log("senddata run");
+      const currentState = this.state;
+      this.props.callbackFunction(currentState);
+      this.props.handleCreate(event);
+    }
+
     changeValue = (event) => {
-        console.log(event);
         const { name, value } = event.target;
         this.setState({ [name]: value });
     };
 
-    handleChange = (event) => {
-      console.log(event);
-      console.log(event.target.value);
-      console.log(event.target.name);
-      const { name, value } = event.target;
-      this.setState({  [name]: (value) });
-  };
 
     render() {
-        const { name, phoneNumber, idValue, cities, countries } = this.state;
+        const { name, phoneNumber, idCityValue, cities, idCountryValue, countries } = this.state;
 
         return (
-            <form onSubmit={this.props.handleCreate}>
+            <form onSubmit={this.sendData}>
                 <div className="form-group">
                     <label htmlFor="name">Name:</label>
                     <input
@@ -93,10 +91,11 @@ class PeopleCreate extends Component {
                 </div>
                 <div className="form-group">
                     <select
+                    required
                     className="form-control"
-                    name="city"
-                    value={idValue}
-                    onChange={this.handleChange}>
+                    name="idCityValue"
+                    value={idCityValue}
+                    onChange={this.changeValue}>
                       <option value="-1" disabled>
                         Select a city
                       </option>
@@ -109,10 +108,11 @@ class PeopleCreate extends Component {
                 </div>
                 <div className="form-group">
                     <select
+                    required
                     className="form-control"
-                    name="country"
-                    value={idValue}
-                    onChange={this.handleChange}>
+                    name="idCountryValue"
+                    value={idCountryValue}
+                    onChange={this.changeValue}>
                       <option value="-1" disabled>
                         Select a country
                       </option>
