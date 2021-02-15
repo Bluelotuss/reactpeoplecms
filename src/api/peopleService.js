@@ -10,6 +10,9 @@ class peopleService {
       })
       .catch((error) => {
         console.log("Error:", error);
+      })
+      .then(() => {
+        return null;
       });
   }
 

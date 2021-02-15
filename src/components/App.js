@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import peopleService from "../api/peopleService";
 import axios from "../../node_modules/axios";
 import PeopleCreate from "./PeopleCreate";
 import PeopleDetails from "./PeopleDetails";
@@ -11,54 +12,36 @@ class App extends Component {
     peopleDetails: null,
     showDetails: false,
     showCreate: false,
-    peopleLoaded: false,
+    peopleLoading: false,
     childData: [],
   };
 
-  componentDidMount() {
-    axios.defaults.headers.post["Content-Type"] =
-      "application/json;charset=utf-8";
-
-    axios //The url might be a bit different for you (the port number might be 44004)
-      .get("https://localhost:5002/api/React")
-      .then((response) => {
-        //Handle success
-        console.log("api all response:", response);
-        this.setState({ peopleList: response.data, peopleLoaded: true });
-      })
-      .catch((error) => {
-        //Handle error
-        console.log("Error", error);
-      })
-      .then(() => {
-        //Always executed
+  async componentDidMount() {
+    let people = await peopleService.getAll();
+    console.log("componentDidMount");
+    console.log(people);
+    if (people !== null) {
+      this.setState({
+        peopleList: people,
+        peopleLoading: true,
       });
+    }
   }
 
-  showPeople = (person) => {
+  showPeople = async (person) => {
     if (
       this.state.peopleDetails === null ||
       person.id !== this.state.peopleDetails.id
     ) {
       //This if is here to prevent user from clicking the same details button many time and we don´t want to send multiple calls to the backend.
-      axios
-        .get("https://localhost:5002/api/React/" + person.id)
-        .then((response) => {
-          //Handle success
-          console.log("api details response:", response);
-          this.setState({
-            peopleDetails: response.data,
-            showCreate: false,
-            showDetails: true,
-          });
-        })
-        .catch((error) => {
-          //Handle error
-          console.log("Error", error);
-        })
-        .then(() => {
-          //Always executed
-        });
+
+      let details = await peopleService.getPerson(person.id);
+      console.log("showPeople");
+      this.setState({
+        peopleDetails: details,
+        showCreate: false,
+        showDetails: true,
+      });
     }
   };
 
