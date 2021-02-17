@@ -12,37 +12,36 @@ class App extends Component {
     peopleDetails: null,
     showDetails: false,
     showCreate: false,
-    peopleLoading: false,
+    peopleLoaded: false,
+    selectedId: "",
     childData: [],
   };
 
   async componentDidMount() {
     let people = await peopleService.getAll();
     console.log("componentDidMount");
-    console.log(people);
-    if (people !== null) {
+    console.log("people", people);
+    if (people !== false) {
       this.setState({
         peopleList: people,
-        peopleLoading: true,
+        peopleLoaded: true,
       });
     }
   }
 
-  showPeople = async (person) => {
-    if (
+  openDetails = (id) => {
+    /*if (
       this.state.peopleDetails === null ||
-      person.id !== this.state.peopleDetails.id
+      id !== this.state.peopleDetails.id
     ) {
-      //This if is here to prevent user from clicking the same details button many time and we don´t want to send multiple calls to the backend.
+      //This if is here to prevent user from clicking the same details button many time and we don´t want to send multiple calls to the backend.*/
 
-      let details = await peopleService.getPerson(person.id);
-      console.log("showPeople");
-      this.setState({
-        peopleDetails: details,
-        showCreate: false,
-        showDetails: true,
-      });
-    }
+    console.log("openDetails", id);
+    this.setState({
+      selectedId: id,
+      showCreate: false,
+      showDetails: true,
+    });
   };
 
   showCreate = () => {
@@ -125,10 +124,11 @@ class App extends Component {
   render() {
     const {
       showCreate,
-      showDetails,
-      peopleDetails,
+      openDetails,
+      selectedId,
       peopleList,
       peopleLoaded,
+      showDetails,
     } = this.state;
 
     return (
@@ -151,7 +151,7 @@ class App extends Component {
           </div>
           <div className="col-6">
             <h3>
-              {showCreate ? "Create" : showDetails ? "Details" : "Welcome"}
+              {showCreate ? "Create" : openDetails ? "Details" : "Welcome"}
             </h3>
           </div>
         </div>
@@ -159,7 +159,7 @@ class App extends Component {
           <div className="col-6">
             <TableList
               people={peopleList}
-              selectedPerson={this.showPeople}
+              detailsClick={this.openDetails}
               peopleLoaded={peopleLoaded}
             />
           </div>
@@ -170,7 +170,7 @@ class App extends Component {
                 callbackFunction={this.callbackFunction}
               />
             ) : showDetails ? (
-              <PeopleDetails person={peopleDetails} />
+              <PeopleDetails id={selectedId} />
             ) : (
               <p>Select a person from the list or create a new person.</p>
             )}

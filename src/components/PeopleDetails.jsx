@@ -1,44 +1,39 @@
-import React from "react";
-import axios from "../../node_modules/axios";
-
-function handleRemove(id) {
-    console.log(id);
-
-    axios({
-        method: "delete",
-        url: "https://localhost:5002/api/React/" + id,
-        data: id,
-      })
-        .then((response) => {
-          //Handle success
-          console.log("api post response:", response);
-        })
-        .catch((error) => {
-          //handle error
-          console.log("Error", error);
-        })
-        .then(() => {
-          //Always execute
-        });
-}
-
-
+import peopleService from '../api/peopleService';
+import React, { useEffect, useState } from 'react';
+import MyLoader from './utils/MyLoader';
 
 const PeopleDetails = (props) => {
-    return (
+  const [personItem, setPersonItem] = useState({
+    item: '',
+    isLoading: true,
+  });
+
+
+useEffect(() => {
+  const fetchData = async () => {
+    let theItem = await peopleService.getPerson(props.id);
+    setPersonItem({ item: theItem, isLoading: false});
+  };
+  fetchData();
+  console.log('PersonDetails is rendered', props.id);
+}, [props.id]); //useEffect is triggered when this value is changed
+
+return personItem.isLoading ? (
+  <MyLoader />
+) : (
         <dl>
             <dt>Name</dt>
-            <dd>{props.person.name}</dd>
+            <dd>{personItem.item.name}</dd>
             <dt>PhoneNumber</dt>
-            <dd>{props.person.phoneNumber}</dd>
+            <dd>{personItem.item.phoneNumber}</dd>
             <dt>City</dt>
-            <dd>{props.person.city.cityName}</dd>
-            <dd><button className="btn btn-danger" onClick={() => handleRemove(props.person.id)}>
+            <dd>{personItem.item.city.cityName}</dd>
+            <dd><button className="btn btn-danger" onClick={() => peopleService.deletePerson(props.person.id)}>
                 Delete
                 </button>
                 </dd>
         </dl>
-    );
+);
 };
 
 export default PeopleDetails;
