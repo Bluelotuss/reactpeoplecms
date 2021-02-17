@@ -1,137 +1,116 @@
-import React, { Component } from "react";
-import axios from "../../node_modules/axios";
+import React, { useState, useEffect } from "react";
+import peopleService from '../api/peopleService';
 
-class PeopleCreate extends Component {
-    state = {
-        name : "",
-        phoneNumber: "",
-        cities: [],
-        countries: [],
-        idCityValue: -1,
-        idCountryValue: -1,
+const PeopleCreate = (props) => {
+  const [personItem, setPersonItem] = useState({ //What is useState
+    name: '',
+    phoneNumber: '',
+    city: [],
+    country: [],
+  });
+  const [personCities, setPersonCities] = useState({
+    cities: [],
+    areCitiesLoading: true,
+  });
+  const [personCountries, setPersonCountries] = useState({
+    countries: [],
+    areCountriesLoading: true,
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let theCities = await peopleService.getAllCities();
+      setPersonCities({ cities: theCities, areCitiesLoading: false });
+
+      let theCountries = await peopleService.getAllCountries();
+      setPersonCountries({ countries: theCountries, areCountriesLoading: false });
+      //console.log('component PeopleCreate rerendered'); //console.log might cause a second render sometimes
     };
+    fetchData();
+  }, []);
 
-    componentDidMount() {
-        axios.defaults.headers.post["Content-Type"] =
-      "application/json;charset=utf-8";
-
-    axios //The url might be a bit different for you (the port number might be 44004)
-      .get("https://localhost:5002/api/React/cities")
-      .then((response) => {
-        //Handle success
-        console.log("api cities response:", response);
-        this.setState({ cities: response.data });
-        console.log("cities state:", this.state.cities);
-
-      })
-      .catch((error) => {
-        //Handle error
-        console.log("Error", error);
-      })
-      .then(() => {
-        //Always executed
-      });
-
-      axios //The url might be a bit different for you (the port number might be 44004)
-      .get("https://localhost:5002/api/React/countries")
-      .then((response) => {
-        //Handle success
-        console.log("api countries response:", response);
-        this.setState({ countries: response.data });
-        console.log("countries state:", this.state.countries);
-      })
-      .catch((error) => {
-        //Handle error
-        console.log("Error", error);
-      })
-      .then(() => {
-        //Always executed
-      });
-    }
-
-    sendData = (event) => {
-      event.preventDefault();
-      console.log("senddata run");
-      const currentState = this.state;
-      this.props.callbackFunction(currentState, event);
-    }
-
-    changeValue = (event) => {
-        const { name, value } = event.target;
-        this.setState({ [name]: value });
-    };
-
-    handleChange = (event) => {
-      const { name, value } = event.target;
-      this.setState({ [name]: Number(value) });
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log('submit personItem', personItem);
+    let itemObject = { item: personItem };
+    props.onSubmit(itemObject);
   };
 
+  const changeValue = (event) => {
+    const { name, value } = event.target;
+    setPersonItem({ ...personItem, [name]: value });
+    //console.log('event', event.target);
+};
 
-    render() {
-        const { name, phoneNumber, idCityValue, cities, idCountryValue, countries } = this.state;
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setPersonItem({ ...personItem, [name]: {value} });
+  };
 
-        return (
-            <form onSubmit={this.sendData}>
-                <div className="form-group">
-                    <label htmlFor="name">Name:</label>
-                    <input
-                    id="name"
-                    name="name"
-                    className="form-control"
-                    type="text"
-                    value={name}
-                    onChange={this.changeValue}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="phoneNumber">Phone number:</label>
-                    <input
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    className="form-control"
-                    type="text"
-                    value={phoneNumber}
-                    onChange={this.changeValue}
-                    />
-                </div>
-                <div className="form-group">
-                    <select
-                    required
-                    className="form-control"
-                    name="idCityValue"
-                    value={idCityValue}
-                    onChange={this.handleChange}>
-                      <option value="-1" disabled>
-                        Select a city
-                      </option>
-                        {cities.map((city) => (
-                        <option key={"cityId" + city.id} value={city.id}>
-                          {city.cityName}
-                        </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="form-group">
-                    <select
-                    required
-                    className="form-control"
-                    name="idCountryValue"
-                    value={idCountryValue}
-                    onChange={this.handleChange}>
-                      <option value="-1" disabled>
-                        Select a country
-                      </option>
-                        {countries.map((country) => <option key={"country" + country.id} value={country.id}>{country.countryName}</option>)}
-                    </select>
-                </div>
-                <div className="form-group">
-                <button className="btn btn-primary" type="submit">
-                    Create
-                </button>
-                </div>
-            </form>
-        );
-    }
-}
+return (
+  <form onSubmit={handleSubmit}>
+      <div className="form-group">
+          <label htmlFor="name">Name:</label>
+          <input
+          id="name"
+          name="name"
+          className="form-control"
+          type="text"
+          value={personItem.name}
+          onChange={changeValue}
+          />
+      </div>
+      <div className="form-group">
+          <label htmlFor="phoneNumber">Phone number:</label>
+          <input
+          id="phoneNumber"
+          name="phoneNumber"
+          className="form-control"
+          type="text"
+          value={personItem.phoneNumber}
+          onChange={changeValue}
+          />
+      </div>
+      <div className="form-group">
+          <select
+          required
+          className="form-control"
+          name="city"
+          //value={idCityValue}
+          onChange={handleChange}>
+            <option value="-1" disabled>
+              Select a city
+            </option>
+              {personCities.cities.map((city) => (
+              <option key={"cityId" + city.id} value={city}>
+                {city.cityName}
+              </option>
+              ))}
+          </select>
+      </div>
+      <div className="form-group">
+          <select
+          required
+          className="form-control"
+          name="idCountryValue"
+          //value={idCountryValue}
+          onChange={handleChange}>
+            <option value="-1" disabled>
+              Select a country
+            </option>
+              {personCountries.countries.map((country) => (
+              <option key={"country" + country.id} value={country.id}>{country.countryName}
+              </option>))}
+          </select>
+      </div>
+      <div className="form-group">
+      <button className="btn btn-primary" type="submit">
+          Create
+      </button>
+      </div>
+  </form>
+);
+
+};
 
 export default PeopleCreate;

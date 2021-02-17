@@ -7,7 +7,6 @@ import TableList from "./TableList";
 
 class App extends Component {
   state = {
-    peopleIdCounter: 3,
     peopleList: [],
     peopleDetails: null,
     showDetails: false,
@@ -44,12 +43,16 @@ class App extends Component {
     });
   };
 
-  showCreate = () => {
+  openCreate = () => {
+    console.log("openCreate");
     this.setState({
-      peopleDetails: null,
       showCreate: true,
       showDetails: false,
     });
+  };
+
+  saveNewPerson = async (props) => {
+    console.log("in saveNewPerson", props.item);
   };
 
   callbackFunction = async (props, event) => {
@@ -142,7 +145,7 @@ class App extends Component {
               <div className="col-3">
                 <button
                   className="btn btn-outline-success"
-                  onClick={this.showCreate}
+                  onClick={this.openCreate}
                 >
                   Create person
                 </button>
@@ -166,8 +169,8 @@ class App extends Component {
           <div className="col-6">
             {showCreate ? (
               <PeopleCreate
-                handleCreate={this.handleCreate}
-                callbackFunction={this.callbackFunction}
+                onSubmit={this.saveNewPerson}
+                //callbackFunction={this.callbackFunction}
               />
             ) : showDetails ? (
               <PeopleDetails id={selectedId} />

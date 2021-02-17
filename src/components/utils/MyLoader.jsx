@@ -12,8 +12,8 @@ function MyLoader() {
 			style={{ 'text-align': 'center' }}
 			type='Puff'
 			color='#d33682'
-			height={300}
-			width={300}
+			height={150}
+			width={150}
 		/>
 	);
 }
