@@ -16,6 +16,10 @@ const PeopleCreate = (props) => {
     countries: [],
     areCountriesLoading: true,
   });
+  const [dropDownItem, setDropDownItem] = useState({
+    idCityValue: -1,
+    idCountryValue: -1,
+  })
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,6 +37,7 @@ const PeopleCreate = (props) => {
     event.preventDefault();
     console.log('submit personItem', personItem);
     let itemObject = { item: personItem };
+    console.log('itemObject', itemObject);
     props.onSubmit(itemObject);
   };
 
@@ -43,8 +48,16 @@ const PeopleCreate = (props) => {
 };
 
   const handleChange = (event) => {
+    //console.log("event", event.target);
+    //console.log("value", JSON.parse(event.target.value));
     const { name, value } = event.target;
-    setPersonItem({ ...personItem, [name]: {value} });
+    setPersonItem({ ...personItem, [name]: JSON.parse(value) });
+
+    if (name === "city") {
+      setDropDownItem({...setDropDownItem, idCityValue: JSON.parse(event.target.value).id});
+    } else {
+      setDropDownItem({...setDropDownItem, idCountryValue: JSON.parse(event.target.value).id});
+    }
   };
 
 return (
@@ -76,13 +89,13 @@ return (
           required
           className="form-control"
           name="city"
-          //value={idCityValue}
+          value={dropDownItem.idCityValue}
           onChange={handleChange}>
             <option value="-1" disabled>
               Select a city
             </option>
-              {personCities.cities.map((city) => (
-              <option key={"cityId" + city.id} value={city}>
+              {personCities.cities.map((city, index) => (
+              <option key={"cityId" + city.id} value={JSON.stringify(city)}>
                 {city.cityName}
               </option>
               ))}
@@ -92,14 +105,14 @@ return (
           <select
           required
           className="form-control"
-          name="idCountryValue"
-          //value={idCountryValue}
+          name="country"
+          value={dropDownItem.idCountryValue}
           onChange={handleChange}>
             <option value="-1" disabled>
               Select a country
             </option>
               {personCountries.countries.map((country) => (
-              <option key={"country" + country.id} value={country.id}>{country.countryName}
+              <option key={"country" + country.id} value={JSON.stringify(country)}>{country.countryName}
               </option>))}
           </select>
       </div>
