@@ -13,7 +13,6 @@ class App extends Component {
     showCreate: false,
     peopleLoaded: false,
     selectedId: "",
-    childData: [],
   };
 
   async componentDidMount() {
@@ -53,75 +52,14 @@ class App extends Component {
 
   saveNewPerson = async (props) => {
     console.log("in saveNewPerson", props.item);
-  };
+    let theNewItem = await peopleService.createPerson(props.item);
+    let people = await peopleService.getAll();
 
-  callbackFunction = async (props, event) => {
-    event.preventDefault();
-    await this.setState({ childData: props });
-    this.handleCreate(event);
-  };
-
-  handleCreate = (event) => {
-    event.preventDefault();
-    const name = event.target[0].value;
-    const phoneNumber = event.target[1].value;
-
-    console.log("chilData", this.state.childData);
-
-    let resultCity;
-    for (let index = 0; index < this.state.childData.cities.length; index++) {
-      if (
-        this.state.childData.idCityValue ===
-        this.state.childData.cities[index].id
-      ) {
-        console.log("indexstate", this.state.childData.cities[index]);
-        resultCity = this.state.childData.cities[index];
-      }
-    }
-
-    let resultCountry;
-    for (
-      let index = 0;
-      index < this.state.childData.countries.length;
-      index++
-    ) {
-      if (
-        this.state.childData.idCountryValue ===
-        this.state.childData.countries[index].id
-      ) {
-        console.log("indexstate", this.state.childData.countries[index]);
-        resultCountry = this.state.childData.countries[index];
-      }
-    }
-
-    console.log("citiesresult", resultCity);
-    const person = {
-      Name: name,
-      PhoneNumber: phoneNumber,
-      City: resultCity,
-      Country: resultCountry,
-    };
-
-    let peopleList = this.state.peopleList;
-
-    axios({
-      method: "post",
-      url: "https://localhost:5002/api/React",
-      data: person,
-    })
-      .then((response) => {
-        //Handle success
-        console.log("api post response:", response);
-        peopleList.push(response.data);
-        this.setState({ peopleList: peopleList });
-      })
-      .catch((error) => {
-        //handle error
-        console.log("Error", error);
-      })
-      .then(() => {
-        //Always execute
-      });
+    console.log("theResponse", theNewItem, props.item);
+    this.setState({
+      peopleList: people,
+      showCreate: false,
+    });
   };
 
   render() {

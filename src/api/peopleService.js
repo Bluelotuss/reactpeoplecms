@@ -52,7 +52,6 @@ class peopleService {
 
   async createPerson(personData) {
     console.log("personData", personData);
-    var data = JSON.stringify(personData);
 
     var config = {
       method: "post",
@@ -60,7 +59,7 @@ class peopleService {
       /* headers: {
                 'Content-Type': 'application/json',
             },*/
-      data: data,
+      data: personData,
     };
     console.log("config", config);
     return await axios(config)
